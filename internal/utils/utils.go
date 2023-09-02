@@ -1,16 +1,79 @@
 package utils
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"flag"
+	"github.com/go-ldap/ldap/v3"
 	"io/ioutil"
 	"log"
+	"net"
+	"net/http"
 	"os"
 )
 
 // For readConfig
-var configFlag = flag.String("config", "../config.json", "Configuration file path")
+var ConfigFlag = flag.String("config", "../conf/config.json", "Configuration file path")
 var config *ConfigFile
+
+// Read the application config file
+func ReadConfig() ConfigFile {
+	// Default configuration values for certain fields
+	config_file := ConfigFile{
+		HttpBindAddr:   ":9991",
+		LdapServerAddr: "ldap://127.0.0.1:389",
+
+		UserNameAttr:  "uid",
+		GroupNameAttr: "gid",
+
+		InvitationNameAttr: "cn",
+		InvitedAutoGroups:  []string{},
+
+		Org: "ResDigita",
+	}
+
+	_, err := os.Stat(*ConfigFlag)
+	if os.IsNotExist(err) {
+		log.Fatalf("Could not find Guichet configuration file at %s. Please create this file, for exemple starting with config.json.exemple and customizing it for your deployment.", *ConfigFlag)
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	bytes, err := ioutil.ReadFile(*ConfigFlag)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = json.Unmarshal(bytes, &config_file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return config_file
+}
+
+func LdapOpen(w http.ResponseWriter) (*ldap.Conn, error) {
+	config := ReadConfig()
+	if config.LdapTLS {
+		tlsConf := &tls.Config{
+			ServerName:         config.LdapServerAddr,
+			InsecureSkipVerify: true,
+		}
+		return ldap.DialTLS("tcp", net.JoinHostPort(config.LdapServerAddr, "636"), tlsConf)
+	} else {
+		return ldap.DialURL(config.LdapServerAddr)
+	}
+
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	log.Printf(fmt.Sprintf("27: %v %v", err, l))
+	// 	return nil
+	// }
+
+	// return l
+}
 
 type ConfigFile struct {
 	HttpBindAddr   string `json:"http_bind_addr"`
@@ -57,42 +120,4 @@ type ConfigFile struct {
 	NewUserPassword      string `json:"new_user_password"`
 	NewUsersBaseDN       string `json:"new_users_base_dn"`
 	NewUserDefaultDomain string `json:"new_user_default_domain"`
-}
-
-// Read the application config file
-func readConfig() ConfigFile {
-	// Default configuration values for certain fields
-	config_file := ConfigFile{
-		HttpBindAddr:   ":9991",
-		LdapServerAddr: "ldap://127.0.0.1:389",
-
-		UserNameAttr:  "uid",
-		GroupNameAttr: "gid",
-
-		InvitationNameAttr: "cn",
-		InvitedAutoGroups:  []string{},
-
-		Org: "ResDigita",
-	}
-
-	_, err := os.Stat(*configFlag)
-	if os.IsNotExist(err) {
-		log.Fatalf("Could not find Guichet configuration file at %s. Please create this file, for exemple starting with config.json.exemple and customizing it for your deployment.", *configFlag)
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	bytes, err := ioutil.ReadFile(*configFlag)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = json.Unmarshal(bytes, &config_file)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return config_file
 }
