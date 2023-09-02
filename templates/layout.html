@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" type="text/css" href="/static/fonts/lack/stylesheet.css" />
+  <link rel="stylesheet" type="text/css" href="/static/fonts/fengardoneue/font.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/lesgv/faire-ma-page.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/lesgv/burger.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/lesgv-colors.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/lesgv.css" />
+
+
+  <title>{{ .Common.WebsiteName }} > {{template "title" .}}</title>
+</head>
+
+<body>
+  <div class="container mb-4">
+    <h1><a href="/">{{ .Common.WebsiteName }} > {{ template "title" .}}</a></h1>
+    <nav role="navigation">
+      <div id="menuToggle">
+        <!--
+        A fake / hidden checkbox is used as click reciever,
+        so you can use the :checked selector on it.
+        -->
+        <input type="checkbox" id="menu-checkbox" />
+
+        <!--
+        Some spans to act as a hamburger.
+        
+        They are acting like a real hamburger,
+        not that McDonalds stuff.
+        -->
+        <div class="burger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <!--
+        Too bad the menu has to be inside of the button
+        but hey, it's pure CSS magic.
+        -->
+        <ul id="menu">
+          <li><a href="https://www.lesgrandsvoisins.com">Les Grands Voisins (.com)</a>&nbsp;&gt;&nbsp;</li>
+          {{template "admenu" .}}
+            <li><a href="#">Les Outils</a><ul class="submenu">
+            <li><a href="https://www.lesgrandsvoisins.com/les-outils/">Les Outils</a></li>
+            <li><a href="https://www.avmeet.com">AVMeet.com</a></li>
+            <li><a href="https://mail.lesgrandsvoisins.com/SOGo/">Mail, Cal., Contacts</a></li>
+            <li><a href="https://wiki.lesgrandsvoisins.com">Wiki</a></li>
+            <li><a href="https://www.lesgrandsvoisins.com/admin">Editer le site web</a></li>
+            <li><a href="https://www.lesgrandsvoisins.com/admin">Editer le blog</a></li>
+          </ul></li>
+          {{if .Common.CanAdmin}}
+            <li>&lt;&nbsp;<a href="#">Administration</a>
+            <ul class="submenu">
+              <!-- <li><a href="/admin/activate">Administrer LDAP</a> -->
+              <li><a href="/admin/activate">Activer des Utilisateur·ices</a></li>
+              <li><a href="/admin/users">Utilisateur·ices</a></li>
+              <!-- <li><a href="/admin/groups">Groupes</a></li> -->
+            </ul>
+            </li>
+          {{end}}
+          <li>&lt;&nbsp;<a href="#">Compte</a>
+            <ul class="submenu">
+              {{if .Common.LoggedIn}}
+                  <li><a href="/session/logout">Se déconnecter</a></li>
+                  <li><a href="/">Tableau de bord</a></li>
+                  <li><a href="/user">Modifier mon profil</a></li>
+                  <li><a href="/passwd">Modifier mon mot de passe</a></li>
+              {{else}}
+                <li><a href="/">Se connecter</a></li>
+                <li><a href="/passwd/lost">Mal de passe oublié</a></li>
+                <li><a href="/user/new">S'enregistrer</a></li>
+              {{end}}
+            </ul></li>
+          <li> &nbsp;&lt;&nbsp;<a href="#" class="jour-nuit" id="jour-nuit">Jour et nuit</a></li>
+        </ul>
+        
+      </div>
+    </nav>
+
+    <hr />
+    {{template "body" .}}
+  </div>
+  <script src="/static/javascript/jquery.slim.min.js"></script>
+  <script src="/static/javascript/bootstrap.bundle.min.js"></script>
+  <script src="/static/javascript/lesgv.js"></script>
+  <script src="/static/javascript/burger.js"></script>
+  <script src="/static/javascript/journuit.js"></script>
+</body>
+
+</html>

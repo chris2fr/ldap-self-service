@@ -1,0 +1,112 @@
+{{define "title"}}Profile{{end}}
+
+{{define "admenu"}}
+{{end}}
+
+{{define "body"}}
+<div class="d-flex">
+  <h2>Modifier mon profil</h2>
+</div>
+
+{{if .Common.ErrorMessage}}
+<div class="alert alert-danger mt-4">Impossible d'effectuer la modification.
+  <div style="font-size: 0.8em">{{ .Common.ErrorMessage }}</div>
+</div>
+{{end}}
+{{if .Common.Success}}
+<div class="alert alert-success mt-4">
+  Profil enregistré.
+</div>
+{{end}}
+
+<div class="form-row">
+  <div class="form-group col-md-12">
+    <label>Identifiant: {{ .Login.Status.Info.Username }}</label>
+  </div>
+</div>
+<div class="form-row">
+  <div class="form-group col-md-6">
+    <label>Courriels existants gérés par Les GV:</label>
+    {{range $index, $email := .Data.MailValues }}
+    <form method="POST" class="mt-4" enctype="multipart/form-data" action="/user/mail">
+      <input type="email" class="form-control" name="email" value="{{$email}}" required>
+      <input type="submit" class="form-control" name="delete" value="Delete">
+      <input type="hidden" name="action" value="Delete">
+      <input type="hidden" name="index" value="{{$index}}">
+    </form>
+    {{end}}
+  </div>
+  <div class="form-group col-md-6">
+    <form method="POST" class="mt-4" enctype="multipart/form-data" action="/user/mail">
+      <label>Ajouter un courriel sous un domaine géré par Les GV :</label>
+      <input type="email" class="form-control" name="email" required>
+      <input type="hidden" name="action" value="Add">
+      <input type="submit" class="form-control" name="add" value="Add">
+    </form>
+  </div>
+</div>
+
+<form method="POST" class="mt-4" enctype="multipart/form-data">
+  <input type="hidden" name="username" value="{{ .Login.Status.Info.Username }}" />
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <label for="display_name">Nom complet:</label>
+      <input type="text" id="display_name" name="display_name" class="form-control" value="{{ .Data.DisplayName }}" />
+    </div>
+  </div>
+  {{/*
+  <!--
+    <h4>Informations complémentaires</h4>
+      {{if .ProfilePicture}}
+        <div class="float-right">
+          <a href="/picture/{{.ProfilePicture}}">
+            <img src="/picture/{{.ProfilePicture}}-thumb" />
+          </a>
+        </div>
+      {{end}}
+-->
+  <!--
+    <div class="form-group form-check">
+      {{if .Visibility}}
+        <input class="form-check-input" name="visibility" type="checkbox" id="visibility" value="on" checked>
+      {{else}}
+        <input class="form-check-input" name="visibility" type="checkbox" id="visibility">
+      {{end}}
+      <label class="form-check-label" for="visibility">Apparaître sur l'annuaire</label>
+    </div>
+-->
+  <!--
+    <div class="form-row">
+      <div class="form-group col-md-8 input-group mb-3 custom-file">
+        <label for="image">Photo de profil:</label>
+        <input type="file" name="image" class="custom-file-input" id="image">
+        <label class="custom-file-label" for="image">Photo de profil (jpeg, jpg or png)</label>
+      </div>
+    </div>
+-->
+  */}}
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="given_name">Prénom:</label>
+      <input type="text" id="given_name" name="given_name" class="form-control" value="{{ .Data.GivenName }}" />
+    </div>
+    <div class="form-group col-md-6">
+      <label for="surname">Nom de famille:</label>
+      <input type="text" id="surname" name="surname" class="form-control" value="{{ .Data.Surname }}" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="form-group col-md-12">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" class="form-control">{{ .Data.Description }}</textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="form-group col-md-12">
+      <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+    </div>
+  </div>
+</form>
+<script src="/static/javascript/minio.js"></script>
+{{end}}

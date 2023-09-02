@@ -1,0 +1,40 @@
+{{define "title"}}Login{{end}}
+
+{{define "admenu"}}
+{{end}}
+
+{{define "body"}}
+<center>
+<img src="/static/image/outilsinformatiques.svg" class="lesgv hero">
+</center>
+
+<h2>S'identifier</h2>
+
+<form method="POST">
+  {{if .Data.WrongUser}}
+    <div class="alert alert-danger">Identifiant invalide.</div>
+  {{end}}
+  {{if .Data.WrongPass}}
+    <div class="alert alert-danger">Mot de passe invalide.</div>
+  {{end}}
+  {{if .Common.ErrorMessage}}
+    <div class="alert alert-danger">Impossible de se connecter.
+      <div style="font-size: 0.8em">{{ .Common.ErrorMessage }}</div>
+    </div>
+  {{end}}
+  <div class="form-group">
+    <label for="username">Identifiant :</label>
+    <input type="text" name="username" id="username" class="form-control" />
+  </div>
+  <div class="form-group">
+    <label for="password">Mot de passe :</label>
+    <input type="password" name="password" id="password" class="form-control" />
+  </div>
+  <button type="submit" class="btn btn-primary">Se connecter</button>
+</form>
+
+<p><strong><a href="/passwd/lost">Mot de passe perdu</a></strong></p>
+
+<p><strong><a href="/user/new">S'enregistrer</a></strong></p>
+
+{{end}}

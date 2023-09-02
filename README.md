@@ -6,11 +6,9 @@
 
 ## Prerequiste
 
-Openldap client need to be installed.
+Openldap client needs to be installed.
 
-```bash
-yum install -y openldap openldap-clients
-```
+The package on Redhad-based directories is `openldap-clients`. 
 
 ## Setting up LDAP Self Serivce
 
@@ -18,7 +16,7 @@ clone repo to /opt
 
 ```bash
 cd /opt
-git clone https://github.com/alvinsiew/ldap-self-service.git
+git clone https://github.com/chris2fr/ldap-self-service.git
 ```
 
 Update your userdn and ldap conf/config.yaml
