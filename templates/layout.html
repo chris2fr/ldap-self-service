@@ -69,11 +69,11 @@
             <ul class="submenu">
               {{if .Common.LoggedIn}}
                   <li><a href="/session/logout">Se déconnecter</a></li>
-                  <li><a href="/">Tableau de bord</a></li>
+                  <li><a href="/home">Tableau de bord</a></li>
                   <li><a href="/user">Modifier mon profil</a></li>
                   <li><a href="/passwd">Modifier mon mot de passe</a></li>
               {{else}}
-                <li><a href="/">Se connecter</a></li>
+                <li><a href="/home">Se connecter</a></li>
                 <li><a href="/passwd/lost">Mal de passe oublié</a></li>
                 <li><a href="/user/new">S'enregistrer</a></li>
               {{end}}

@@ -1,0 +1,23 @@
+{{define "title"}}Annuaire |{{end}}
+
+{{define "admenu"}}
+{{end}}
+
+<form>
+  <div class="form-group form-row">
+    <div class="col-sm-2">&nbsp;</div>
+    <label for="search" class="col-sm-2 col-form-label">Rechercher :</label>
+    <input class="form-control col-sm-4" id="search" name="search" type="text" onkeyup="searchDirectory()" size="20">
+  </div>
+</form>
+
+<div id="search-results"></div>
+
+<script src="/static/javascript/search.js"></script>
+<script>
+window.addEventListener("load", function(event) {
+	searchDirectory();
+});
+</script>
+
+{{end}}

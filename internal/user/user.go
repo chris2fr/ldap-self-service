@@ -2,10 +2,13 @@ package user
 
 import (
 	"fmt"
-	"github.com/go-ldap/ldap/v3"
+
 	"ldap-self-service/internal/utils"
 	"log"
+
 	"strings"
+
+	"github.com/go-ldap/ldap/v3"
 )
 
 // Modify User
@@ -93,12 +96,12 @@ func replaceIfContent(modifReq *ldap.ModifyRequest, key string, value string, pr
 	return nil
 }
 
-func Bind(user User, config *utils.ConfigFile, ldapConn *ldap.Conn) error {
-	return ldapConn.Bind(user.DN, user.Password)
+func Bind(curUser User, config *utils.ConfigFile, ldapConn *ldap.Conn) error {
+	return ldapConn.Bind(curUser.DN, curUser.Password)
 }
 
 /*
-Represents a user
+Represents a curUser
 */
 type User struct {
 	DN           string
@@ -116,5 +119,3 @@ type User struct {
 	UserEntry    *ldap.Entry
 	SeeAlso      string
 }
-
-type EntryList []*ldap.Entry

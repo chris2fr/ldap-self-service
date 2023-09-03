@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"flag"
 	"github.com/go-ldap/ldap/v3"
+	"github.com/jsimonetti/pwscheme/ssha512"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -54,6 +56,34 @@ func ReadConfig() ConfigFile {
 	return config_file
 }
 
+func OpenLdap(config *ConfigFile) (*ldap.Conn, error) {
+	var ldapConn *ldap.Conn
+	var err error
+	if config.LdapTLS {
+		tlsConf := &tls.Config{
+			ServerName:         config.LdapServerAddr,
+			InsecureSkipVerify: true,
+		}
+		ldapConn, err = ldap.DialTLS("tcp", net.JoinHostPort(config.LdapServerAddr, "636"), tlsConf)
+	} else {
+		ldapConn, err = ldap.DialURL("ldap://" + config.LdapServerAddr)
+	}
+	if err != nil {
+		log.Printf("openLDAP %v", err)
+		log.Printf("openLDAP %v", config.LdapServerAddr)
+	}
+	return ldapConn, err
+
+	// l, err := ldap.DialURL(config.LdapServerAddr)
+	// if err != nil {
+	// 	log.Printf(fmt.Sprint("Erreur connect LDAP %v", err))
+	// 	log.Printf(fmt.Sprint("Erreur connect LDAP %v", config.LdapServerAddr))
+	// 	return nil
+	// } else {
+	// 	return l
+	// }
+}
+
 func LdapOpen(w http.ResponseWriter) (*ldap.Conn, error) {
 	config := ReadConfig()
 	if config.LdapTLS {
@@ -73,6 +103,21 @@ func LdapOpen(w http.ResponseWriter) (*ldap.Conn, error) {
 	// }
 
 	// return l
+}
+
+// Suggesting a 12 char password with some excentrics
+func SuggestPassword() string {
+	password := ""
+	chars := "abcdfghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*+_-="
+	for i := 0; i < 12; i++ {
+		password += string([]rune(chars)[rand.Intn(len(chars))])
+	}
+	return password
+}
+
+// Encode encodes the []byte of raw password
+func SSHAEncode(rawPassPhrase string) (string, error) {
+	return ssha512.Generate(rawPassPhrase, 16)
 }
 
 type ConfigFile struct {
